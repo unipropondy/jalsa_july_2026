@@ -1,0 +1,78 @@
+{
+  "expo": {
+    "name": "Smart POS",
+    "slug": "pos-1",
+    "version": "1.0.0",
+    "orientation": "default",
+    "icon": "./assets/images/logo_pos.png",
+    "scheme": "restaurantapp",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "backgroundColor": "#F8FAFC",
+      "infoPlist": {
+        "NSBluetoothAlwaysUsageDescription": "This app needs Bluetooth access to connect to thermal printers for receipts.",
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "bundleIdentifier": "com.javi06.pos1"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#FF8C00",
+        "foregroundImage": "./assets/images/logo_pos.png"
+      },
+      "package": "com.javi06.pos1",
+      "versionCode": 1,
+      "permissions": [
+        "INTERNET",
+        "BLUETOOTH",
+        "BLUETOOTH_ADMIN",
+        "BLUETOOTH_SCAN",
+        "BLUETOOTH_CONNECT",
+        "ACCESS_FINE_LOCATION"
+      ]
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/logo_pos.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/logo_pos.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#FF8C00",
+          "dark": {
+            "backgroundColor": "#000000"
+          }
+        }
+      ],
+      "expo-font",
+      "expo-web-browser",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": false
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "5bb6afb3-f13c-4d31-8888-bacd54796371"
+      }
+    },
+    "owner": "javi06"
+  }
+}
