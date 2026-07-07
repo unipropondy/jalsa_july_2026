@@ -343,16 +343,26 @@ router.get("/get-date", async (req, res) => {
 // 🔹 DELETE Global Date from dateentry (Dayend Operation)
 router.post("/delete-date", async (req, res) => {
   try {
+    const { startDate } = req.body;
+    console.log("Delete-Date API Called with startDate:", startDate, typeof startDate);
     const pool = await poolPromise;
 
-    // As requested: just unconditionally update the DateEntry to the next day
-    const queryStr = "UPDATE DateEntry SET StartDate = CAST(GETDATE() + 1 AS DATE)";
+    // Deletes the specific StartDate record, or if none provided, clears the table
+    let queryStr = "DELETE FROM dateentry";
+    if (startDate) {
+      queryStr += " WHERE StartDate = @startDate";
+    }
 
-    await pool.request().query(queryStr);
+    const request = pool.request();
+    if (startDate) {
+      request.input("startDate", sql.VarChar, startDate);
+    }
 
-    res.json({ success: true, message: "Date entry updated successfully" });
+    await request.query(queryStr);
+
+    res.json({ success: true, message: "Date entry deleted successfully" });
   } catch (err) {
-    console.error("Dayend Close error:", err.message);
+    console.error("Delete date error:", err.message);
     res.status(500).json({ error: err.message });
   }
 });
