@@ -130,7 +130,7 @@ router.get("/kitchen-printers", async (req, res) => {
     for (const cat of activeCats) {
       // Default to code 2 (Indian) if no KitchenTypeCode is mapped in ckt (same as dishes query default)
       const code = parseInt(cat.KitchenTypeCode || '2');
-      
+
       // Deduplicate on KitchenTypeValue so each printer code only has one configuration input
       if (seenCodes.has(code)) continue;
       seenCodes.add(code);
@@ -230,7 +230,7 @@ router.post("/kitchen-printers/add", async (req, res) => {
   try {
     const { name, ip } = req.body;
     const pool = await poolPromise;
-    
+
     await pool.request()
       .input("name", sql.NVarChar, name)
       .input("ip", sql.NVarChar, ip)
@@ -259,7 +259,7 @@ router.post("/kitchen-printers/delete", async (req, res) => {
   try {
     const { id } = req.body; // KitchenTypeValue
     const pool = await poolPromise;
-    
+
     await pool.request()
       .input("id", sql.Int, id)
       .query("UPDATE PrintMaster SET IsActive = 0 WHERE KitchenTypeValue = @id");
@@ -343,26 +343,16 @@ router.get("/get-date", async (req, res) => {
 // 🔹 DELETE Global Date from dateentry (Dayend Operation)
 router.post("/delete-date", async (req, res) => {
   try {
-    const { startDate } = req.body;
-    console.log("Delete-Date API Called with startDate:", startDate, typeof startDate);
     const pool = await poolPromise;
-    
-    // Deletes the specific StartDate record, or if none provided, clears the table
-    let queryStr = "DELETE FROM dateentry";
-    if (startDate) {
-      queryStr += " WHERE StartDate = @startDate";
-    }
 
-    const request = pool.request();
-    if (startDate) {
-      request.input("startDate", sql.VarChar, startDate);
-    }
-    
-    await request.query(queryStr);
+    // As requested: just unconditionally update the DateEntry to the next day
+    const queryStr = "UPDATE DateEntry SET StartDate = CAST(GETDATE() + 1 AS DATE)";
 
-    res.json({ success: true, message: "Date entry deleted successfully" });
+    await pool.request().query(queryStr);
+
+    res.json({ success: true, message: "Date entry updated successfully" });
   } catch (err) {
-    console.error("Delete date error:", err.message);
+    console.error("Dayend Close error:", err.message);
     res.status(500).json({ error: err.message });
   }
 });
