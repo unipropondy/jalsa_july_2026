@@ -64,7 +64,7 @@ router.get("/payment/:terminal/:userId", async (req, res) => {
     ISNULL(Remarks, '') AS PaymodeName,
     ISNULL(SUM(Amount), 0) AS Amount,
     COUNT(*) AS PayCount,
-    CAST(PaymentCollectedOn AS DATE) AS PaymentCollectedOn,
+    CAST(start_date AS DATE) AS PaymentCollectedOn,
     isSettlement,
     isDayend,
     Remarks,
@@ -73,7 +73,7 @@ FROM PaymentDetailCur
 WHERE ${dateFilter}
 GROUP BY 
     Remarks,
-    CAST(PaymentCollectedOn AS DATE),
+    CAST(start_date AS DATE),
     isSettlement,
     isDayend,
     TerminalCode    
@@ -140,8 +140,7 @@ router.get("/sales-summary/:terminal", async (req, res) => {
           ISNULL(Paymode,'') AS Paymode,
           ISNULL(SUM(Amount),0) AS Amount
         FROM PaymentDetailCur
-        WHERE TerminalCode = @TerminalCode
-        AND isSettlement = 0
+        WHERE 
         ${dateFilter}
         GROUP BY Paymode 
       `);
